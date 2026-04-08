@@ -1,7 +1,12 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { useStore } from '@/store/useStore'
 
 export function LoginPage() {
+  const navigate = useNavigate()
+  const { setUser, setDemoMode, setWifiStatus, setWifiInfo, setCurrentSegment } = useStore()
+
   const handleKakaoLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'kakao',
@@ -9,6 +14,24 @@ export function LoginPage() {
         redirectTo: window.location.origin,
       },
     })
+  }
+
+  const handleDemoMode = () => {
+    // Set a fake demo user so the app treats us as authenticated
+    setUser({
+      id: 'demo-user',
+      nickname: '체험 승객',
+      bio: '데모 모드로 체험 중',
+      avatar_url: '🚇',
+      gender: null,
+      age: null,
+      created_at: new Date().toISOString(),
+    })
+    setDemoMode(true)
+    setWifiStatus('connected')
+    setWifiInfo('Metro Free WiFi', 2, '강남')
+    setCurrentSegment('gangnam-yeoksam')
+    navigate('/map')
   }
 
   return (
@@ -22,30 +45,65 @@ export function LoginPage() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="text-center w-full max-w-sm"
       >
+        {/* Hero section with line accent */}
         <motion.div
-          className="text-6xl mb-8"
-          animate={{ y: [0, -8, 0] }}
-          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+          className="mb-6"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
         >
-          🚇
+          <div
+            className="w-20 h-20 rounded-2xl mx-auto flex items-center justify-center text-4xl"
+            style={{ background: 'var(--color-accent)', boxShadow: '0 0 30px rgba(242,201,76,0.25)' }}
+          >
+            🚇
+          </div>
         </motion.div>
 
         <h1
-          className="display text-[36px] font-bold mb-3"
+          className="display text-[36px] font-bold mb-2"
           style={{ color: 'var(--color-text)' }}
         >
           MetroLove
         </h1>
 
-        <p className="text-base mb-1" style={{ color: 'var(--color-text-secondary)' }}>
-          재미없는 퇴근길에
+        <p className="mono text-[11px] tracking-wider mb-8" style={{ color: 'var(--color-text-secondary)' }}>
+          SEOUL UNDERGROUND MATCHING
         </p>
-        <p className="text-lg font-semibold mb-14" style={{ color: 'var(--color-text)' }}>
-          우연히 찾은 내 운명
-        </p>
+
+        {/* Tagline with line accent */}
+        <div className="mb-10">
+          <p className="text-base mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+            재미없는 퇴근길에
+          </p>
+          <p className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>
+            우연히 찾은 내 운명
+          </p>
+          <div
+            className="w-12 h-1 mx-auto mt-4 rounded-full"
+            style={{ background: 'var(--color-accent)' }}
+          />
+        </div>
+
+        {/* Demo button — primary CTA for portfolio visitors */}
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleDemoMode}
+          className="w-full py-4 rounded-lg font-semibold text-[15px] mb-3"
+          style={{ background: 'var(--color-accent)', color: '#1A1A1A' }}
+        >
+          🗺 데모로 체험하기
+        </motion.button>
 
         {/* Kakao Login */}
         <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleKakaoLogin}
@@ -61,8 +119,15 @@ export function LoginPage() {
           카카오로 시작하기
         </motion.button>
 
-        <p className="mt-8 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-          로그인하면 이용약관에 동의하게 됩니다
+        {/* Metro line colors as decoration */}
+        <div className="flex justify-center gap-1.5 mt-10">
+          {['#0052A4','#00A84D','#EF7C1C','#00A5DE','#996CAC','#CD7C2F','#747F00','#E6186C','#BDB092'].map((color) => (
+            <div key={color} className="w-2 h-2 rounded-full" style={{ background: color, opacity: 0.6 }} />
+          ))}
+        </div>
+
+        <p className="mt-4 text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
+          서울 지하철 WiFi 기반 매칭 서비스
         </p>
       </motion.div>
     </div>

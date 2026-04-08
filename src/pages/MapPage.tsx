@@ -20,14 +20,16 @@ export function MapPage() {
   const navigate = useNavigate()
   const { activeUsers, ghostUsers, wifiStatus, currentStation, demoMode } = useStore()
   const { joinPresence } = usePresence()
-  const { toggleDemo } = useDemoMode()
+  const { toggleDemo, startDemo } = useDemoMode()
   const [selectedUser, setSelectedUser] = useState<ActiveUser | null>(null)
 
   useEffect(() => {
-    if (wifiStatus === 'connected') {
+    if (demoMode && activeUsers.length === 0) {
+      startDemo()
+    } else if (wifiStatus === 'connected' && !demoMode) {
       joinPresence()
     }
-  }, [wifiStatus, joinPresence])
+  }, [wifiStatus, demoMode, activeUsers.length, joinPresence, startDemo])
 
   return (
     <div className="min-h-dvh" style={{ background: 'var(--color-bg)' }}>
