@@ -56,7 +56,7 @@ export function ProfilePage() {
   if (!user) return null
 
   return (
-    <div className="min-h-dvh pb-24 mx-auto" style={{ background: "var(--color-bg)", maxWidth: "100%" }}>
+    <div className="min-h-dvh pb-24" style={{ background: "var(--color-bg)" }}>
       {/* Header */}
       <div className="px-5 pt-6 pb-5 flex items-center justify-between">
         <button onClick={() => navigate('/map')} className="text-xl" style={{ color: 'var(--color-text-secondary)' }}>
@@ -77,7 +77,7 @@ export function ProfilePage() {
           {editing ? (
             <div>
               <div
-                className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl"
+                className="w-24 h-24 rounded-full mb-4 flex items-center justify-center text-5xl"
                 style={{ background: 'var(--color-accent)', boxShadow: '0 4px 20px rgba(242,201,76,0.3)' }}
               >
                 {avatarEmoji}
@@ -100,7 +100,7 @@ export function ProfilePage() {
             </div>
           ) : (
             <div
-              className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl"
+              className="w-24 h-24 rounded-full mb-4 flex items-center justify-center text-5xl"
               style={{ background: 'var(--color-accent)', boxShadow: '0 4px 20px rgba(242,201,76,0.3)' }}
             >
               {user.avatar_url ?? '🧑'}

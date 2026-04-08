@@ -7,7 +7,7 @@ export function ChatListPage() {
   const { chatRooms } = useStore()
 
   return (
-    <div className="min-h-dvh mx-auto" style={{ background: "var(--color-bg)", maxWidth: "100%" }}>
+    <div className="min-h-dvh" style={{ background: "var(--color-bg)" }}>
       <header
         className="flex items-center gap-3 px-5 py-4 border-b"
         style={{ borderColor: 'var(--color-border)' }}
