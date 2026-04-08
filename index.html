@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#F2F0EB" />
     <meta name="description" content="재미없는 퇴근길에 우연히 찾은 내 운명 — 지하철 와이파이 매칭 채팅" />
     <title>MetroLove</title>
+    <link rel="manifest" href="/manifest.json" />
     <!-- Fonts: Seoul Underground Design System -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet" />
@@ -16,5 +17,12 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {})
+        })
+      }
+    </script>
   </body>
 </html>
