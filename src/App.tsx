@@ -9,6 +9,7 @@ import { ChatListPage } from '@/pages/ChatListPage'
 import { ChatPage } from '@/pages/ChatPage'
 import { MapPage } from '@/pages/MapPage'
 import { AdminPage } from '@/pages/AdminPage'
+import { ProfilePage } from '@/pages/ProfilePage'
 
 function AppRoutes() {
   const { isAuthenticated, hasProfile, loading } = useAuth()
@@ -40,6 +41,7 @@ function AppRoutes() {
       <Route path="/chat" element={<ChatListPage />} />
       <Route path="/chat/:matchId" element={<ChatPage />} />
       <Route path="/map" element={<MapPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
