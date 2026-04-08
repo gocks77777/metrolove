@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 import { usePresence } from '@/hooks/usePresence'
+import { useDemoMode } from '@/hooks/useDemoMode'
 import { SubwayLineMap, type Station } from '@/components/map/SubwayLineMap'
 import type { ActiveUser } from '@/types'
 
@@ -17,8 +18,9 @@ const LINE_2_STATIONS: Station[] = [
 
 export function MapPage() {
   const navigate = useNavigate()
-  const { activeUsers, ghostUsers, wifiStatus, currentStation } = useStore()
+  const { activeUsers, ghostUsers, wifiStatus, currentStation, demoMode } = useStore()
   const { joinPresence } = usePresence()
+  const { toggleDemo } = useDemoMode()
   const [selectedUser, setSelectedUser] = useState<ActiveUser | null>(null)
 
   useEffect(() => {
@@ -183,6 +185,22 @@ export function MapPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Demo Mode Toggle */}
+      <div className="px-5 mb-20">
+        <button
+          onClick={toggleDemo}
+          className="w-full py-2.5 rounded-lg mono text-[11px] font-medium transition-all"
+          style={{
+            background: demoMode ? 'var(--color-accent)' : 'var(--color-surface)',
+            color: demoMode ? '#1A1A1A' : 'var(--color-text-secondary)',
+            border: `1px solid ${demoMode ? 'var(--color-accent)' : 'var(--color-border-strong)'}`,
+          }}
+          aria-label={demoMode ? 'Demo Mode 끄기' : 'Demo Mode 켜기'}
+        >
+          {demoMode ? '🟢 DEMO MODE ON — 시뮬레이션 중' : '▶ DEMO MODE — 체험해보기'}
+        </button>
+      </div>
 
       {/* Bottom Nav */}
       <nav
