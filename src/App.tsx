@@ -44,9 +44,19 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <div className="max-w-md mx-auto min-h-dvh">
+      {/* Skip to content for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium"
+        style={{ background: 'var(--color-accent)', color: '#1A1A1A' }}
+      >
+        본문으로 건너뛰기
+      </a>
+      <div id="main-content" className="max-w-md mx-auto min-h-dvh" role="main">
         <AppRoutes />
       </div>
+      {/* Live region for screen reader announcements */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only" id="sr-announcer" />
     </BrowserRouter>
   )
 }
