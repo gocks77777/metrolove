@@ -214,7 +214,8 @@ export function ProfilePage() {
 
       {/* Bottom Nav */}
       <nav
-        className="fixed bottom-0 inset-x-0 max-w-md mx-auto flex justify-around py-3 pb-6 border-t"
+        className="fixed bottom-0 inset-x-0 mx-auto flex justify-around py-3 pb-6 border-t"
+        style={{ maxWidth: '520px' }}
         style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border)' }}
       >
         <NavItem icon="🗺" label="노선" onClick={() => navigate('/map')} />
