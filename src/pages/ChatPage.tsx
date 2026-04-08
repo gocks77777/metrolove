@@ -167,16 +167,18 @@ export function ChatPage() {
               className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className="max-w-[75%] px-4 py-3 text-base leading-relaxed"
+                className="max-w-[75%] px-4 py-3"
                 style={{
                   background: isMe ? 'var(--color-accent)' : 'var(--color-surface)',
                   color: isMe ? '#1A1A1A' : 'var(--color-text)',
                   borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                   border: isMe ? 'none' : '1px solid var(--color-border)',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'anywhere',
                 }}
               >
-                <p>{msg.content}</p>
-                <p className="text-xs mt-1" style={{ opacity: 0.5 }}>
+                <p style={{ fontSize: '15px', lineHeight: '1.5' }}>{msg.content}</p>
+                <p style={{ fontSize: '11px', marginTop: '4px', opacity: 0.5 }}>
                   {new Date(msg.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -212,8 +214,8 @@ export function ChatPage() {
             onChange={(e) => { setInput(e.target.value); if (!demoMode) sendTyping() }}
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요..."
-            className="flex-1 px-4 py-3 rounded-2xl text-base outline-none"
-            style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border-strong)' }}
+            className="flex-1 px-4 py-2.5 rounded-2xl outline-none"
+            style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border-strong)', fontSize: '15px' }}
             aria-label="메시지 입력"
           />
           <motion.button
