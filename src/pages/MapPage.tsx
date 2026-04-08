@@ -222,7 +222,7 @@ export function MapPage() {
         <NavItem icon="🗺" label="노선" active onClick={() => {}} />
         <NavItem icon="💬" label="채팅" onClick={() => navigate('/chat')} />
         <NavItem icon="📡" label="근처" onClick={() => navigate('/match')} />
-        <NavItem icon="👤" label="프로필" onClick={() => {}} />
+        <NavItem icon="👤" label="프로필" onClick={() => navigate('/profile')} />
       </nav>
     </div>
   )
