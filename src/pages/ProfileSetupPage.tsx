@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useStore } from '@/store/useStore'
 
+const EMOJI_OPTIONS = ['🎧', '📚', '☕', '🎮', '🐱', '🌙', '🎵', '✨', '🏃', '🍜', '💻', '🌸']
+
 export function ProfileSetupPage() {
   const navigate = useNavigate()
   const { setUser } = useStore()
   const [nickname, setNickname] = useState('')
-  const [bio, setBio] = useState('')
+  const [commuteThought, setCommuteThought] = useState('')
+  const [avatarEmoji, setAvatarEmoji] = useState('🧑')
   const [gender, setGender] = useState<string>('')
   const [age, setAge] = useState('')
   const [loading, setLoading] = useState(false)
@@ -25,10 +28,10 @@ export function ProfileSetupPage() {
       .upsert({
         id: authUser.id,
         nickname: nickname.trim(),
-        bio: bio.trim() || null,
+        bio: commuteThought.trim() || null,
         gender: (gender || null) as 'male' | 'female' | 'other' | null,
         age: age ? parseInt(age) : null,
-        avatar_url: (authUser.user_metadata?.avatar_url as string) || null,
+        avatar_url: avatarEmoji,
       })
       .select()
       .single()
@@ -41,45 +44,69 @@ export function ProfileSetupPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col px-6 py-12">
+    <div className="min-h-dvh flex flex-col px-6 py-12" style={{ background: 'var(--color-bg)' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-sm mx-auto"
       >
-        <h1 className="text-2xl font-bold text-metro-text mb-2">프로필 설정</h1>
-        <p className="text-metro-muted mb-8">다른 승객에게 보여질 정보예요</p>
+        <h1 className="display text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
+          프로필 설정
+        </h1>
+        <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>
+          지하철에서 보여질 당신의 모습이에요
+        </p>
 
-        <div className="space-y-5">
+        <div className="space-y-6">
+          {/* Avatar Emoji */}
+          <div>
+            <label className="label">아바타</label>
+            <div className="flex flex-wrap gap-2">
+              {EMOJI_OPTIONS.map((emoji) => (
+                <button
+                  key={emoji}
+                  onClick={() => setAvatarEmoji(emoji)}
+                  className="w-11 h-11 rounded-lg flex items-center justify-center text-xl transition-all"
+                  style={{
+                    background: avatarEmoji === emoji ? 'var(--color-accent)' : 'var(--color-surface)',
+                    border: `2px solid ${avatarEmoji === emoji ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  }}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Nickname */}
           <div>
-            <label className="block text-sm text-metro-muted mb-2">닉네임 *</label>
+            <label className="label">닉네임 *</label>
             <input
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              placeholder="퇴근길 고양이"
+              placeholder="지하철에서 불릴 이름"
               maxLength={12}
-              className="w-full bg-metro-card border border-white/5 rounded-xl px-4 py-3 text-metro-text placeholder:text-metro-muted/50 focus:outline-none focus:border-metro-primary/50 transition-colors"
+              className="input"
             />
           </div>
 
-          {/* Bio */}
+          {/* Commute Thought */}
           <div>
-            <label className="block text-sm text-metro-muted mb-2">한줄 소개</label>
+            <label className="label">오늘의 출근 생각</label>
             <input
               type="text"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="2호선 매일 타는 사람 🐱"
-              maxLength={30}
-              className="w-full bg-metro-card border border-white/5 rounded-xl px-4 py-3 text-metro-text placeholder:text-metro-muted/50 focus:outline-none focus:border-metro-primary/50 transition-colors"
+              value={commuteThought}
+              onChange={(e) => setCommuteThought(e.target.value)}
+              placeholder="오늘 퇴근길에 무슨 생각 했어요?"
+              maxLength={40}
+              className="input"
             />
           </div>
 
           {/* Gender */}
           <div>
-            <label className="block text-sm text-metro-muted mb-2">성별 (선택)</label>
+            <label className="label">성별 (선택)</label>
             <div className="flex gap-2">
               {[
                 { value: 'male', label: '남성' },
@@ -89,11 +116,12 @@ export function ProfileSetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => setGender(gender === opt.value ? '' : opt.value)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${
-                    gender === opt.value
-                      ? 'bg-metro-primary text-white'
-                      : 'bg-metro-card text-metro-muted border border-white/5'
-                  }`}
+                  className="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all"
+                  style={{
+                    background: gender === opt.value ? 'var(--color-accent)' : 'var(--color-surface)',
+                    color: gender === opt.value ? '#1A1A1A' : 'var(--color-text-secondary)',
+                    border: `1px solid ${gender === opt.value ? 'var(--color-accent)' : 'var(--color-border-strong)'}`,
+                  }}
                 >
                   {opt.label}
                 </button>
@@ -103,7 +131,7 @@ export function ProfileSetupPage() {
 
           {/* Age */}
           <div>
-            <label className="block text-sm text-metro-muted mb-2">나이 (선택)</label>
+            <label className="label">나이 (선택)</label>
             <input
               type="number"
               value={age}
@@ -111,7 +139,7 @@ export function ProfileSetupPage() {
               placeholder="25"
               min={18}
               max={100}
-              className="w-full bg-metro-card border border-white/5 rounded-xl px-4 py-3 text-metro-text placeholder:text-metro-muted/50 focus:outline-none focus:border-metro-primary/50 transition-colors"
+              className="input"
             />
           </div>
         </div>
@@ -120,9 +148,9 @@ export function ProfileSetupPage() {
           whileTap={{ scale: 0.97 }}
           onClick={handleSubmit}
           disabled={!nickname.trim() || loading}
-          className="w-full mt-8 py-3.5 rounded-xl font-medium text-white bg-gradient-to-r from-metro-primary to-metro-secondary disabled:opacity-40 transition-opacity"
+          className="w-full mt-8 py-3.5 rounded-lg font-semibold text-sm btn-primary disabled:opacity-40 transition-opacity"
         >
-          {loading ? '저장 중...' : '탑승 준비 완료!'}
+          {loading ? '저장 중...' : '🚇 탑승 준비 완료!'}
         </motion.button>
       </motion.div>
     </div>

@@ -12,39 +12,44 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 relative overflow-hidden">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 -left-32 w-64 h-64 bg-neon-pink/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-neon-purple/10 rounded-full blur-[100px]" />
-
+    <div
+      className="min-h-dvh flex flex-col items-center justify-center px-6"
+      style={{ background: 'var(--color-bg)' }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        className="text-center w-full max-w-sm relative z-10"
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+        className="text-center w-full max-w-sm"
       >
-        {/* Logo */}
         <motion.div
-          className="text-7xl mb-8"
-          animate={{ y: [0, -10, 0] }}
+          className="text-6xl mb-8"
+          animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
         >
           🚇
         </motion.div>
 
-        <h1 className="text-4xl font-bold mb-4 text-gradient">
+        <h1
+          className="display text-[36px] font-bold mb-3"
+          style={{ color: 'var(--color-text)' }}
+        >
           MetroLove
         </h1>
 
-        <p className="text-text-secondary text-lg mb-1">재미없는 퇴근길에</p>
-        <p className="text-text-primary text-xl font-semibold mb-14">우연히 찾은 내 운명</p>
+        <p className="text-base mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+          재미없는 퇴근길에
+        </p>
+        <p className="text-lg font-semibold mb-14" style={{ color: 'var(--color-text)' }}>
+          우연히 찾은 내 운명
+        </p>
 
         {/* Kakao Login */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleKakaoLogin}
-          className="w-full py-4 rounded-2xl font-semibold text-[#191919] flex items-center justify-center gap-2.5 text-[15px]"
+          className="w-full py-4 rounded-lg font-semibold text-[#191919] flex items-center justify-center gap-2.5 text-[15px]"
           style={{ backgroundColor: '#FEE500' }}
         >
           <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
@@ -56,7 +61,7 @@ export function LoginPage() {
           카카오로 시작하기
         </motion.button>
 
-        <p className="text-text-muted text-xs mt-8">
+        <p className="mt-8 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
           로그인하면 이용약관에 동의하게 됩니다
         </p>
       </motion.div>

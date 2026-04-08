@@ -2,11 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import type { Profile, Match, Message } from '@/types'
-
-const ADMIN_IDS: string[] = [
-  '3e313f0f-5fe6-4008-86eb-75c8ec7bf0db',
-]
+import { useStore } from '@/store/useStore'
+import type { Profile, Match } from '@/types'
 
 interface Stats {
   totalUsers: number
@@ -17,68 +14,35 @@ interface Stats {
 
 export function AdminPage() {
   const navigate = useNavigate()
-  const [isAdmin, setIsAdmin] = useState(false)
+  const { activeUsers } = useStore()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<Stats>({ totalUsers: 0, totalMatches: 0, totalMessages: 0, activeToday: 0 })
   const [users, setUsers] = useState<Profile[]>([])
   const [matches, setMatches] = useState<Match[]>([])
-  const [recentMessages, setRecentMessages] = useState<(Message & { sender_nickname?: string })[]>([])
-  const [tab, setTab] = useState<'overview' | 'users' | 'matches' | 'messages'>('overview')
-
-  const checkAdmin = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      navigate('/')
-      return
-    }
-    // Allow access if ADMIN_IDS is empty (first setup) or user is in list
-    if (ADMIN_IDS.length === 0 || ADMIN_IDS.includes(user.id)) {
-      setIsAdmin(true)
-    } else {
-      navigate('/')
-      return
-    }
-    setLoading(false)
-  }, [navigate])
+  const [tab, setTab] = useState<'realtime' | 'users' | 'matches'>('realtime')
 
   const loadData = useCallback(async () => {
-    // Users
     const { data: profileData, count: userCount } = await supabase
       .from('profiles')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
     setUsers(profileData || [])
 
-    // Matches
-    const { data: matchData, count: matchCount } = await supabase
+    const { count: matchCount } = await supabase
       .from('matches')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .limit(50)
-    setMatches(matchData || [])
+      .select('*', { count: 'exact', head: true })
 
-    // Messages
-    const { data: msgData, count: msgCount } = await supabase
-      .from('messages')
+    const { data: matchData } = await supabase
+      .from('matches')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(20)
+    setMatches(matchData || [])
 
-    if (msgData) {
-      const enriched = await Promise.all(
-        msgData.map(async (msg) => {
-          const { data: sender } = await supabase
-            .from('profiles')
-            .select('nickname')
-            .eq('id', msg.sender_id)
-            .single()
-          return { ...msg, sender_nickname: sender?.nickname }
-        })
-      )
-      setRecentMessages(enriched)
-    }
+    const { count: msgCount } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
 
-    // Active today
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const { count: activeCount } = await supabase
@@ -92,134 +56,159 @@ export function AdminPage() {
       totalMessages: msgCount || 0,
       activeToday: activeCount || 0,
     })
+    setLoading(false)
   }, [])
 
   useEffect(() => {
-    checkAdmin()
-  }, [checkAdmin])
-
-  useEffect(() => {
-    if (isAdmin) loadData()
-  }, [isAdmin, loadData])
+    loadData()
+  }, [loadData])
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
         <div className="text-4xl animate-bounce">⚙️</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-metro-dark">
+    <div className="min-h-dvh" style={{ background: 'var(--color-bg)' }}>
       {/* Header */}
-      <header className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+      <header
+        className="px-5 py-4 border-b flex items-center justify-between"
+        style={{ borderColor: 'var(--color-border)' }}
+      >
         <div>
-          <h1 className="font-bold text-metro-text">MetroLove Admin</h1>
-          <p className="text-xs text-metro-muted">관리자 대시보드</p>
+          <h1 className="display font-bold" style={{ color: 'var(--color-text)' }}>Admin</h1>
+          <p className="mono text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
+            실시간 대시보드
+          </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={loadData}
-            className="px-3 py-1.5 bg-metro-primary/20 border border-metro-primary/30 rounded-lg text-xs text-metro-primary"
-          >
+          <button onClick={loadData} className="px-3 py-1.5 rounded-lg text-xs btn-primary">
             새로고침
           </button>
-          <button
-            onClick={() => navigate('/')}
-            className="px-3 py-1.5 bg-metro-card border border-white/5 rounded-lg text-xs text-metro-muted"
-          >
+          <button onClick={() => navigate('/map')} className="px-3 py-1.5 rounded-lg text-xs btn-secondary">
             앱으로
           </button>
         </div>
       </header>
 
-      {/* Stats */}
+      {/* Real-time indicator */}
+      <div
+        className="mx-5 mt-4 rounded-lg px-4 py-3 flex items-center gap-3"
+        style={{ background: 'var(--color-surface)' }}
+      >
+        <span
+          className="w-2.5 h-2.5 rounded-full animate-wifi-dot"
+          style={{ background: 'var(--color-success)' }}
+        />
+        <span className="mono text-sm font-medium" style={{ color: 'var(--color-success)' }}>
+          {activeUsers.length}명 실시간 탑승 중
+        </span>
+      </div>
+
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 p-5">
         {[
-          { label: '총 유저', value: stats.totalUsers, icon: '👥' },
-          { label: '총 매칭', value: stats.totalMatches, icon: '💜' },
-          { label: '총 메시지', value: stats.totalMessages, icon: '💬' },
-          { label: '오늘 접속', value: stats.activeToday, icon: '🚇' },
+          { label: '총 유저', value: stats.totalUsers, icon: '👥', color: 'var(--color-connection)' },
+          { label: '총 매칭', value: stats.totalMatches, icon: '💛', color: 'var(--color-accent)' },
+          { label: '총 메시지', value: stats.totalMessages, icon: '💬', color: 'var(--color-success)' },
+          { label: '오늘 접속', value: stats.activeToday, icon: '🚇', color: 'var(--color-text)' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-metro-card border border-white/5 rounded-xl p-4"
+            className="card p-4"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-metro-muted text-xs">{stat.label}</span>
+              <span className="mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>
+                {stat.label}
+              </span>
               <span>{stat.icon}</span>
             </div>
-            <p className="text-2xl font-bold text-metro-text">{stat.value}</p>
+            <p className="text-2xl font-bold" style={{ color: stat.color }}>
+              {stat.value}
+            </p>
           </motion.div>
         ))}
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 px-5 mb-4">
-        {(['overview', 'users', 'matches', 'messages'] as const).map((t) => (
+        {(['realtime', 'users', 'matches'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-              tab === t
-                ? 'bg-metro-primary text-white'
-                : 'bg-metro-card text-metro-muted'
-            }`}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+            style={{
+              background: tab === t ? 'var(--color-accent)' : 'var(--color-surface)',
+              color: tab === t ? '#1A1A1A' : 'var(--color-text-secondary)',
+            }}
           >
-            {t === 'overview' ? '개요' : t === 'users' ? '유저' : t === 'matches' ? '매칭' : '메시지'}
+            {t === 'realtime' ? '실시간' : t === 'users' ? '유저' : '매칭'}
           </button>
         ))}
       </div>
 
       {/* Content */}
       <div className="px-5 pb-20">
-        {tab === 'overview' && (
+        {tab === 'realtime' && (
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-metro-text">최근 가입</h3>
-            {users.slice(0, 5).map((u) => (
-              <div key={u.id} className="bg-metro-card border border-white/5 rounded-xl p-3 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-metro-primary to-metro-secondary flex items-center justify-center text-sm">
-                  {u.avatar_url ? (
-                    <img src={u.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    u.nickname.charAt(0)
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-metro-text font-medium">{u.nickname}</p>
-                  <p className="text-xs text-metro-muted truncate">{u.bio || '소개 없음'}</p>
-                </div>
-                <span className="text-[10px] text-metro-muted">
-                  {new Date(u.created_at).toLocaleDateString('ko-KR')}
-                </span>
+            <h3 className="mono text-[11px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>
+              현재 탑승자
+            </h3>
+            {activeUsers.length === 0 ? (
+              <div className="card p-6 text-center" style={{ color: 'var(--color-text-secondary)' }}>
+                현재 탑승자 없음
               </div>
-            ))}
+            ) : (
+              activeUsers.map((u) => (
+                <div key={u.id} className="card p-3 flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-lg"
+                    style={{ background: 'var(--color-surface)' }}
+                  >
+                    {u.avatar_url || '🧑'}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{u.nickname}</p>
+                    <p className="mono text-[10px]" style={{ color: 'var(--color-text-secondary)' }}>
+                      {u.station}역 // {u.line}호선
+                    </p>
+                  </div>
+                  <span
+                    className="w-2 h-2 rounded-full animate-wifi-dot"
+                    style={{ background: 'var(--color-success)' }}
+                  />
+                </div>
+              ))
+            )}
           </div>
         )}
 
         {tab === 'users' && (
           <div className="space-y-2">
-            <p className="text-xs text-metro-muted mb-3">총 {users.length}명</p>
+            <p className="mono text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>총 {users.length}명</p>
             {users.map((u) => (
-              <div key={u.id} className="bg-metro-card border border-white/5 rounded-xl p-3">
+              <div key={u.id} className="card p-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-metro-primary to-metro-secondary flex items-center justify-center text-sm">
-                    {u.avatar_url ? (
-                      <img src={u.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      u.nickname.charAt(0)
-                    )}
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-lg"
+                    style={{ background: 'var(--color-surface)' }}
+                  >
+                    {u.avatar_url || u.nickname.charAt(0)}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-metro-text font-medium">{u.nickname}</p>
-                    <p className="text-xs text-metro-muted">{u.bio || '-'} · {u.gender || '-'} · {u.age || '-'}세</p>
+                    <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{u.nickname}</p>
+                    <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+                      {u.bio || '-'} · {u.gender || '-'} · {u.age || '-'}세
+                    </p>
                   </div>
                 </div>
-                <p className="text-[10px] text-metro-muted/50 mt-2 font-mono truncate">{u.id}</p>
+                <p className="mono text-[9px] mt-2 truncate" style={{ color: 'var(--color-text-tertiary)' }}>{u.id}</p>
               </div>
             ))}
           </div>
@@ -227,55 +216,35 @@ export function AdminPage() {
 
         {tab === 'matches' && (
           <div className="space-y-2">
-            <p className="text-xs text-metro-muted mb-3">총 {matches.length}건</p>
+            <p className="mono text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>최근 20건</p>
             {matches.map((m) => (
-              <div key={m.id} className="bg-metro-card border border-white/5 rounded-xl p-3">
+              <div key={m.id} className="card p-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] ${
-                      m.status === 'matched' ? 'bg-metro-success/20 text-metro-success'
-                        : m.status === 'extended' ? 'bg-metro-primary/20 text-metro-primary'
-                        : 'bg-metro-danger/20 text-metro-danger'
-                    }`}>
-                      {m.status}
-                    </span>
-                    <span className="text-xs text-metro-muted">
-                      {new Date(m.created_at).toLocaleString('ko-KR')}
-                    </span>
-                  </div>
-                  {m.expires_at && (
-                    <span className="text-[10px] text-metro-warning">
-                      만료: {new Date(m.expires_at).toLocaleTimeString('ko-KR')}
-                    </span>
-                  )}
+                  <span
+                    className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+                    style={{
+                      background: m.status === 'matched'
+                        ? 'rgba(60,179,113,0.1)' : m.status === 'extended'
+                        ? 'rgba(74,127,181,0.1)' : 'rgba(217,79,79,0.1)',
+                      color: m.status === 'matched'
+                        ? 'var(--color-success)' : m.status === 'extended'
+                        ? 'var(--color-connection)' : 'var(--color-alert)',
+                    }}
+                  >
+                    {m.status}
+                  </span>
+                  <span className="mono text-[10px]" style={{ color: 'var(--color-text-secondary)' }}>
+                    {new Date(m.created_at).toLocaleString('ko-KR')}
+                  </span>
                 </div>
-                <p className="text-[10px] text-metro-muted/50 mt-1.5 font-mono truncate">
+                <p className="mono text-[9px] mt-1.5 truncate" style={{ color: 'var(--color-text-tertiary)' }}>
                   {m.user_a} ↔ {m.user_b}
                 </p>
               </div>
             ))}
-            {matches.length === 0 && <p className="text-metro-muted text-sm text-center py-8">매칭 기록 없음</p>}
-          </div>
-        )}
-
-        {tab === 'messages' && (
-          <div className="space-y-2">
-            <p className="text-xs text-metro-muted mb-3">최근 50건</p>
-            {recentMessages.map((msg) => (
-              <div key={msg.id} className="bg-metro-card border border-white/5 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-metro-primary font-medium">
-                    {msg.sender_nickname || '알 수 없음'}
-                  </span>
-                  <span className="text-[10px] text-metro-muted">
-                    {new Date(msg.created_at).toLocaleString('ko-KR')}
-                  </span>
-                </div>
-                <p className="text-sm text-metro-text">{msg.content}</p>
-                <p className="text-[10px] text-metro-muted/50 mt-1 font-mono truncate">match: {msg.match_id}</p>
-              </div>
-            ))}
-            {recentMessages.length === 0 && <p className="text-metro-muted text-sm text-center py-8">메시지 없음</p>}
+            {matches.length === 0 && (
+              <p className="text-center py-8" style={{ color: 'var(--color-text-secondary)' }}>매칭 기록 없음</p>
+            )}
           </div>
         )}
       </div>
