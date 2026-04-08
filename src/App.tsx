@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import { useStore } from '@/store/useStore'
 import { LoginPage } from '@/pages/LoginPage'
 import { ProfileSetupPage } from '@/pages/ProfileSetupPage'
 import { LandingPage } from '@/pages/LandingPage'
@@ -11,20 +12,24 @@ import { AdminPage } from '@/pages/AdminPage'
 
 function AppRoutes() {
   const { isAuthenticated, hasProfile, loading } = useAuth()
+  const { demoMode, user } = useStore()
 
-  if (loading) {
+  // Demo mode bypasses auth
+  const isDemoActive = demoMode && user?.id === 'demo-user'
+
+  if (loading && !isDemoActive) {
     return (
-      <div className="min-h-dvh flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
         <div className="text-4xl animate-bounce">🚇</div>
       </div>
     )
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isDemoActive) {
     return <LoginPage />
   }
 
-  if (!hasProfile) {
+  if (!hasProfile && !isDemoActive) {
     return <ProfileSetupPage />
   }
 
