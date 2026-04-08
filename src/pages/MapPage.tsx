@@ -5,6 +5,7 @@ import { useStore } from '@/store/useStore'
 import { usePresence } from '@/hooks/usePresence'
 import { useDemoMode } from '@/hooks/useDemoMode'
 import { SubwayLineMap, type Station } from '@/components/map/SubwayLineMap'
+import { MatchNotification } from '@/components/matching/MatchNotification'
 import type { ActiveUser } from '@/types'
 
 // Line 2 subset for MVP (5 stations, 강남 구간)
@@ -18,10 +19,11 @@ const LINE_2_STATIONS: Station[] = [
 
 export function MapPage() {
   const navigate = useNavigate()
-  const { activeUsers, ghostUsers, wifiStatus, currentStation, demoMode } = useStore()
+  const { activeUsers, ghostUsers, wifiStatus, currentStation, demoMode, setChatRooms, chatRooms } = useStore()
   const { joinPresence } = usePresence()
   const { toggleDemo, startDemo } = useDemoMode()
   const [selectedUser, setSelectedUser] = useState<ActiveUser | null>(null)
+  const [matchedUser, setMatchedUser] = useState<string | null>(null)
 
   useEffect(() => {
     if (demoMode && activeUsers.length === 0) {
@@ -173,6 +175,35 @@ export function MapPage() {
                   ✕
                 </button>
                 <button
+                  onClick={() => {
+                    if (!selectedUser) return
+                    const matchId = `demo-match-${Date.now()}`
+                    setChatRooms([
+                      ...chatRooms,
+                      {
+                        match_id: matchId,
+                        partner: {
+                          id: selectedUser.id,
+                          nickname: selectedUser.nickname,
+                          bio: '퇴근길에 좋은 사람 만나면 좋겠다',
+                          avatar_url: selectedUser.avatar_url,
+                          gender: null,
+                          age: null,
+                          created_at: new Date().toISOString(),
+                        },
+                        last_message: null,
+                        unread_count: 0,
+                        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+                        is_extended: false,
+                      },
+                    ])
+                    setMatchedUser(selectedUser.nickname)
+                    setSelectedUser(null)
+                    setTimeout(() => {
+                      setMatchedUser(null)
+                      navigate(`/chat/${matchId}`)
+                    }, 2000)
+                  }}
                   className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
                   style={{ background: 'var(--color-accent)', color: '#1A1A1A', boxShadow: '0 4px 20px rgba(242,201,76,0.3)' }}
                   aria-label="좋아요"
@@ -192,6 +223,8 @@ export function MapPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <MatchNotification nickname={matchedUser} />
 
       {/* Demo Mode Toggle */}
       <div className="px-5 mb-20">
