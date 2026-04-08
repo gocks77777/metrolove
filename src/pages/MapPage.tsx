@@ -121,7 +121,8 @@ export function MapPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed inset-x-0 bottom-0 max-w-md mx-auto z-20"
+            className="fixed inset-x-0 bottom-0 mx-auto z-20"
+            style={{ maxWidth: '520px' }}
           >
             <div className="mx-4 mb-4 card p-6 shadow-lg" style={{ background: 'var(--color-surface-raised)' }}>
               {/* Close */}
@@ -244,7 +245,8 @@ export function MapPage() {
 
       {/* Bottom Nav */}
       <nav
-        className="fixed bottom-0 inset-x-0 max-w-md mx-auto flex justify-around py-3 pb-6 border-t"
+        className="fixed bottom-0 inset-x-0 mx-auto flex justify-around py-3 pb-6 border-t"
+        style={{ maxWidth: '520px' }}
         style={{
           background: 'var(--color-surface-raised)',
           borderColor: 'var(--color-border)',

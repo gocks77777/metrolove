@@ -77,7 +77,7 @@
 }
 
 body {
-  background-color: #E0DCD6;
+  background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -86,24 +86,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-}
-
-/* App container gets its own bg */
-#main-content {
-  background-color: var(--color-bg);
-}
-
-/* PC: show nice frame effect */
-@media (min-width: 480px) {
-  body {
-    display: flex;
-    justify-content: center;
-  }
-  #main-content {
-    min-height: 100dvh;
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
-  }
 }
 
 /* Seoul Underground button */
