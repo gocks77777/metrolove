@@ -59,7 +59,7 @@ function App() {
       >
         본문으로 건너뛰기
       </a>
-      <div id="main-content" className="max-w-md mx-auto min-h-dvh" role="main">
+      <div id="main-content" className="max-w-md mx-auto min-h-dvh relative" role="main" style={{ boxShadow: 'rgba(0,0,0,0.08) 2px 0 20px, rgba(0,0,0,0.08) -2px 0 20px' }}>
         <AppRoutes />
       </div>
       {/* Live region for screen reader announcements */}
