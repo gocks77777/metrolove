@@ -107,7 +107,7 @@ export function ChatPage() {
   const timerColor = timer !== null && timer < 60 ? 'var(--color-alert)' : 'var(--color-accent)'
 
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-dvh flex flex-col mx-auto" style={{ background: "var(--color-bg)", maxWidth: "600px" }}>
       {/* Header */}
       <header
         className="flex items-center gap-3 px-5 py-3 border-b sticky top-0 z-10"
