@@ -33,35 +33,24 @@ export function MapPage() {
 
   return (
     <div className="min-h-dvh" style={{ background: 'var(--color-bg)' }}>
-      {/* Status Bar */}
-      <div
-        className="flex justify-between items-center px-5 py-3 mono text-[12px]"
-        style={{ color: 'var(--color-text-secondary)' }}
-      >
-        <span>{new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
-        <span className="text-[10px]">
-          {wifiStatus === 'connected' ? 'T wifi zone' : ''}
-        </span>
-      </div>
-
       {/* Header */}
-      <div className="px-5 pb-4">
+      <div className="px-5 pt-6 pb-5">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="display text-[28px] font-bold leading-tight" style={{ color: 'var(--color-text)' }}>
+            <h1 className="display text-4xl font-bold leading-tight" style={{ color: 'var(--color-text)' }}>
               지금, 2호선
             </h1>
-            <p className="mono text-[11px] mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-base mt-2" style={{ color: 'var(--color-text-secondary)' }}>
               {currentStation ? `${currentStation} 구간` : '강남 → 삼성 구간'}
             </p>
           </div>
           {wifiStatus === 'connected' && (
             <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-              style={{ background: 'rgba(60,179,113,0.1)', color: 'var(--color-success)' }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(60,179,113,0.12)', color: 'var(--color-success)' }}
             >
-              <span className="w-1.5 h-1.5 rounded-full animate-wifi-dot" style={{ background: 'var(--color-success)' }} />
-              <span className="mono text-[11px] font-medium">탑승 중</span>
+              <span className="w-2 h-2 rounded-full animate-wifi-dot" style={{ background: 'var(--color-success)' }} />
+              <span className="text-sm font-semibold">탑승 중</span>
             </div>
           )}
         </div>
@@ -83,10 +72,10 @@ export function MapPage() {
       {/* Nearby Users Section */}
       <div className="px-5 mb-5">
         <p
-          className="mono text-[11px] uppercase tracking-wider mb-3"
+          className="text-sm font-semibold mb-3"
           style={{ color: 'var(--color-text-secondary)' }}
         >
-          근처 탑승자 // {activeUsers.length}명
+          근처 탑승자 · {activeUsers.length}명
         </p>
         <div className="flex gap-2.5 overflow-x-auto pb-2">
           {activeUsers.length === 0 ? (
@@ -110,10 +99,10 @@ export function MapPage() {
                 >
                   {user.avatar_url ?? '🧑'}
                 </div>
-                <p className="text-[13px] font-semibold truncate" style={{ color: 'var(--color-text)' }}>
+                <p className="text-sm font-bold truncate" style={{ color: 'var(--color-text)' }}>
                   {user.nickname}
                 </p>
-                <p className="mono text-[10px] mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
                   {user.station}역
                 </p>
               </button>
@@ -237,10 +226,10 @@ function NavItem({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 mono text-[10px]"
+      className="flex flex-col items-center gap-1 text-xs font-medium"
       style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
     >
-      <span className="text-xl">{icon}</span>
+      <span className="text-2xl">{icon}</span>
       <span>{label}</span>
     </button>
   )

@@ -55,7 +55,7 @@ describe('SubwayLineMap', () => {
         onUserTap={vi.fn()}
       />
     )
-    expect(screen.getByText('LINE 2 // LIVE')).toBeInTheDocument()
+    expect(screen.getByText('2호선 실시간')).toBeInTheDocument()
   })
 
   it('has accessible label', () => {

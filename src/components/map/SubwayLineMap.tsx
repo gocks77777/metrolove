@@ -71,13 +71,13 @@ export function SubwayLineMap({
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <span
-          className="mono text-[10px] uppercase tracking-wider"
+          className="text-xs font-semibold tracking-wide"
           style={{ color: 'var(--color-text-secondary)' }}
         >
-          LINE {lineNumber} // LIVE
+          {lineNumber}호선 실시간
         </span>
         <span
-          className="mono text-[10px]"
+          className="text-xs font-medium"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           {activeUsers.length}명 탑승 중
@@ -133,16 +133,15 @@ export function SubwayLineMap({
               {/* Station name */}
               <text
                 x={x}
-                y={TRACK_Y + 22}
+                y={TRACK_Y + 24}
                 textAnchor="middle"
-                className="mono"
-                fontSize={9}
+                fontSize={11}
                 fill={
                   isCurrent
                     ? 'var(--color-text)'
                     : 'var(--color-text-secondary)'
                 }
-                fontWeight={isCurrent ? 600 : 400}
+                fontWeight={isCurrent ? 700 : 500}
               >
                 {station.name}
               </text>
@@ -184,8 +183,7 @@ export function SubwayLineMap({
                   x={pos.x}
                   y={pos.y - 14}
                   textAnchor="middle"
-                  className="mono"
-                  fontSize={7}
+                  fontSize={8}
                   fill="var(--color-text-tertiary)"
                 >
                   {formatTimeAgo(ghost.boarded_at)}
