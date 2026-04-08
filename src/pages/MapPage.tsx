@@ -9,11 +9,11 @@ import type { ActiveUser } from '@/types'
 
 // Line 2 subset for MVP (5 stations, 강남 구간)
 const LINE_2_STATIONS: Station[] = [
-  { id: 'gyodae', name: '교대', x: 0, y: 0 },
-  { id: 'gangnam', name: '강남', x: 0, y: 0 },
-  { id: 'yeoksam', name: '역삼', x: 0, y: 0 },
-  { id: 'seolleung', name: '선릉', x: 0, y: 0 },
-  { id: 'samsung', name: '삼성', x: 0, y: 0 },
+  { id: '교대', name: '교대', x: 0, y: 0 },
+  { id: '강남', name: '강남', x: 0, y: 0 },
+  { id: '역삼', name: '역삼', x: 0, y: 0 },
+  { id: '선릉', name: '선릉', x: 0, y: 0 },
+  { id: '삼성', name: '삼성', x: 0, y: 0 },
 ]
 
 export function MapPage() {
@@ -91,18 +91,18 @@ export function MapPage() {
               <button
                 key={user.id}
                 onClick={() => setSelectedUser(user)}
-                className="card flex-shrink-0 w-[120px] p-4 text-center"
+                className="card flex-shrink-0 w-[140px] p-5 text-center"
               >
                 <div
-                  className="w-12 h-12 rounded-full mx-auto mb-2.5 flex items-center justify-center text-2xl"
+                  className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl"
                   style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border)' }}
                 >
                   {user.avatar_url ?? '🧑'}
                 </div>
-                <p className="text-sm font-bold truncate" style={{ color: 'var(--color-text)' }}>
+                <p className="text-base font-bold truncate" style={{ color: 'var(--color-text)' }}>
                   {user.nickname}
                 </p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                   {user.station}역
                 </p>
               </button>
@@ -121,52 +121,68 @@ export function MapPage() {
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="fixed inset-x-0 bottom-0 max-w-md mx-auto z-20"
           >
-            <div className="mx-4 mb-4 card p-5 shadow-lg" style={{ background: 'var(--color-surface-raised)' }}>
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-3xl flex-shrink-0"
-                  style={{ background: 'var(--color-surface)' }}
-                >
-                  {selectedUser.avatar_url ?? '🧑'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="display text-lg font-bold" style={{ color: 'var(--color-text)' }}>
-                    {selectedUser.nickname}
-                  </h3>
-                  <p className="mono text-[11px] mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                    {selectedUser.station}역 근처 // {formatTimeAgo(selectedUser.online_at)}
-                  </p>
-                </div>
+            <div className="mx-4 mb-4 card p-6 shadow-lg" style={{ background: 'var(--color-surface-raised)' }}>
+              {/* Close */}
+              <div className="flex justify-end mb-2">
                 <button
                   onClick={() => setSelectedUser(null)}
-                  className="text-xl"
-                  style={{ color: 'var(--color-text-secondary)' }}
+                  className="text-xl w-8 h-8 flex items-center justify-center rounded-full"
+                  style={{ color: 'var(--color-text-secondary)', background: 'var(--color-surface)' }}
                 >
                   ✕
                 </button>
               </div>
 
+              {/* Profile */}
+              <div className="text-center mb-5">
+                <div
+                  className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl"
+                  style={{ background: 'var(--color-surface)', border: '3px solid var(--color-border-strong)' }}
+                >
+                  {selectedUser.avatar_url ?? '🧑'}
+                </div>
+                <h3 className="display text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
+                  {selectedUser.nickname}
+                </h3>
+                <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                  {selectedUser.station}역 근처 · {formatTimeAgo(selectedUser.online_at)}
+                </p>
+              </div>
+
+              {/* Commute thought */}
+              <div
+                className="rounded-xl p-4 mb-5"
+                style={{ background: 'var(--color-surface)', borderLeft: '3px solid var(--color-accent)' }}
+              >
+                <p className="text-xs font-semibold mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+                  오늘의 출근 생각
+                </p>
+                <p className="text-base" style={{ color: 'var(--color-text)' }}>
+                  퇴근길에 좋은 사람 만나면 좋겠다 ☺️
+                </p>
+              </div>
+
               {/* Action buttons */}
-              <div className="flex justify-center gap-4 mt-5">
+              <div className="flex justify-center gap-5">
                 <button
                   onClick={() => setSelectedUser(null)}
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border-2"
-                  style={{ borderColor: 'var(--color-alert)', color: 'var(--color-alert)' }}
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-2xl border-2"
+                  style={{ borderColor: 'var(--color-alert)', color: 'var(--color-alert)', background: 'var(--color-surface-raised)' }}
                   aria-label="패스"
                 >
                   ✕
                 </button>
                 <button
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
-                  style={{ background: 'var(--color-accent)', color: '#1A1A1A' }}
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+                  style={{ background: 'var(--color-accent)', color: '#1A1A1A', boxShadow: '0 4px 20px rgba(242,201,76,0.3)' }}
                   aria-label="좋아요"
                 >
                   💛
                 </button>
                 <button
                   onClick={() => navigate('/chat')}
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border-2"
-                  style={{ borderColor: 'var(--color-connection)', color: 'var(--color-connection)' }}
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-2xl border-2"
+                  style={{ borderColor: 'var(--color-connection)', color: 'var(--color-connection)', background: 'var(--color-surface-raised)' }}
                   aria-label="메시지"
                 >
                   💬

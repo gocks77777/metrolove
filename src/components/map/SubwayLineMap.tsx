@@ -37,19 +37,30 @@ function getStationX(index: number, total: number): number {
   return PADDING_X + (usableWidth / (total - 1)) * index
 }
 
-function getUserPosition(
+function getPositionBySegment(
   segment: string,
   stations: Station[],
   offset: number = 0
 ): { x: number; y: number } {
   const [fromId, toId] = segment.split('-')
-  const fromIdx = stations.findIndex((s) => s.id === fromId)
-  const toIdx = stations.findIndex((s) => s.id === toId)
-  if (fromIdx === -1) return { x: MAP_WIDTH / 2, y: TRACK_Y - 30 }
+  const fromIdx = stations.findIndex((s) => s.id === fromId || s.name === fromId)
+  const toIdx = stations.findIndex((s) => s.id === toId || s.name === toId)
+  if (fromIdx === -1) return { x: MAP_WIDTH / 2, y: TRACK_Y - 35 }
   const fromX = getStationX(fromIdx, stations.length)
-  const toX = toIdx !== -1 ? getStationX(toIdx, stations.length) : fromX + 40
-  const midX = (fromX + toX) / 2 + offset * 20
-  return { x: midX, y: TRACK_Y - 32 }
+  const toX = toIdx !== -1 ? getStationX(toIdx, stations.length) : fromX + 30
+  const midX = (fromX + toX) / 2 + offset * 18
+  return { x: midX, y: TRACK_Y - 35 }
+}
+
+function getPositionByStation(
+  stationName: string,
+  stations: Station[],
+  offset: number = 0
+): { x: number; y: number } {
+  const idx = stations.findIndex((s) => s.id === stationName || s.name === stationName)
+  if (idx === -1) return { x: MAP_WIDTH / 2, y: TRACK_Y - 35 }
+  const x = getStationX(idx, stations.length) + offset * 22
+  return { x, y: TRACK_Y - 35 }
 }
 
 export function SubwayLineMap({
@@ -152,7 +163,7 @@ export function SubwayLineMap({
         {/* Ghost users (behind active users) */}
         <AnimatePresence>
           {ghostUsers.map((ghost, i) => {
-            const pos = getUserPosition(ghost.segment, stations, i * 0.5)
+            const pos = getPositionBySegment(ghost.segment, stations, i * 0.5)
             return (
               <motion.g
                 key={`ghost-${ghost.id}`}
@@ -196,8 +207,7 @@ export function SubwayLineMap({
         {/* Active users */}
         <AnimatePresence>
           {activeUsers.map((user, i) => {
-            const segment = `${user.station}-next`
-            const pos = getUserPosition(segment, stations, i * 0.8)
+            const pos = getPositionByStation(user.station ?? '', stations, i * 0.8)
             return (
               <motion.g
                 key={user.id}
