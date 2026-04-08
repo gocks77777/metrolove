@@ -54,7 +54,7 @@ export function MatchPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col relative overflow-hidden mx-auto" style={{ background: "var(--color-bg)", maxWidth: "600px" }}>
+    <div className="min-h-dvh flex flex-col relative overflow-hidden mx-auto" style={{ background: "var(--color-bg)", maxWidth: "100%" }}>
       {/* Header */}
       <header className="flex items-center justify-between px-5 py-4 relative z-10">
         <div className="flex items-center gap-2.5">
