@@ -99,6 +99,8 @@ export function SubwayLineMap({
       <svg
         viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
         className="w-full"
+        style={{ minHeight: '160px', overflow: 'visible' }}
+        preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
       >
         {/* Track line */}
