@@ -56,7 +56,7 @@ export function ProfilePage() {
   if (!user) return null
 
   return (
-    <div className="min-h-dvh pb-24" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-dvh pb-24 mx-auto" style={{ background: "var(--color-bg)", maxWidth: "600px" }}>
       {/* Header */}
       <div className="px-5 pt-6 pb-5 flex items-center justify-between">
         <button onClick={() => navigate('/map')} className="text-xl" style={{ color: 'var(--color-text-secondary)' }}>
@@ -214,8 +214,7 @@ export function ProfilePage() {
 
       {/* Bottom Nav */}
       <nav
-        className="fixed bottom-0 inset-x-0 mx-auto flex justify-around py-3 pb-6 border-t"
-        style={{ maxWidth: '520px' }}
+        className="fixed bottom-0 inset-x-0 flex justify-around py-3 pb-6 border-t"
         style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border)' }}
       >
         <NavItem icon="🗺" label="노선" onClick={() => navigate('/map')} />
