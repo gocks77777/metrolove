@@ -23,7 +23,7 @@ export function LandingPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 relative overflow-hidden mx-auto" style={{ background: 'var(--color-bg)', maxWidth: '100%' }}>
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

@@ -35,8 +35,8 @@ export function LoginPage() {
 
   return (
     <div
-      className="min-h-dvh flex flex-col items-center justify-between px-6 py-16 mx-auto"
-      style={{ background: 'var(--color-bg)', maxWidth: '100%' }}
+      className="min-h-dvh flex flex-col items-center justify-between px-6 py-16"
+      style={{ background: 'var(--color-bg)' }}
     >
       {/* Top spacer */}
       <div />
@@ -56,7 +56,7 @@ export function LoginPage() {
           className="mb-10"
         >
           <div
-            className="w-28 h-28 rounded-3xl mx-auto flex items-center justify-center text-6xl"
+            className="w-28 h-28 rounded-3xl flex items-center justify-center text-6xl"
             style={{ background: 'var(--color-accent)', boxShadow: '0 8px 40px rgba(242,201,76,0.3)' }}
           >
             🚇

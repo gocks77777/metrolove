@@ -34,7 +34,7 @@ export function MapPage() {
   }, [wifiStatus, demoMode, activeUsers.length, joinPresence, startDemo])
 
   return (
-    <div className="min-h-dvh mx-auto" style={{ background: 'var(--color-bg)', maxWidth: '100%' }}>
+    <div className="min-h-dvh" style={{ background: 'var(--color-bg)' }}>
       {/* Header */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex justify-between items-start">
@@ -96,7 +96,7 @@ export function MapPage() {
                 className="card flex-shrink-0 w-[140px] p-5 text-center"
               >
                 <div
-                  className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl"
+                  className="w-14 h-14 rounded-full mb-3 flex items-center justify-center text-3xl"
                   style={{ background: 'var(--color-surface)', border: '2px solid var(--color-border)' }}
                 >
                   {user.avatar_url ?? '🧑'}
@@ -139,7 +139,7 @@ export function MapPage() {
               {/* Profile */}
               <div className="text-center mb-5">
                 <div
-                  className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl"
+                  className="w-20 h-20 rounded-full mb-4 flex items-center justify-center text-4xl"
                   style={{ background: 'var(--color-surface)', border: '3px solid var(--color-border-strong)' }}
                 >
                   {selectedUser.avatar_url ?? '🧑'}
